@@ -1,0 +1,53 @@
+[Approaching] Perp walks towards Victim and Victim walks away from Perp and Perp and Victim are not adjacent to each other, then
+[Stealing] Perp must be adjacent to Victim for between 4 seconds and 10 seconds, then
+[Perp turning] Victim walks straight and Perp must walk opposite for at most 3 seconds, then
+[Leaving] Perp and Victim walk in opposite directions and Perp and Victim walk away from each other and Perp must be far from Victim for at least 3 seconds.
+
+# SequentialNode(
+#     # [Approaching]
+#     ConjunctionNode([
+#         StateNode([Perp], speed=Speed.WALK),
+#         ActorTargetStateNode([Perp, Victim],
+#                              intended_distance_change=DistanceChange.DECREASING,
+#                              relative_direction=Direction.STRAIGHT),
+#         StateNode([Victim], speed=Speed.WALK),
+#         ActorTargetStateNode([Victim, Perp],
+#                              intended_distance_change=DistanceChange.INCREASING,
+#                              relative_direction=Direction.OPPOSITE),
+#         NegationNode(
+#             MutualStateNode([Perp, Victim], distance=Distance.ADJACENT)
+#         )
+#     ]),
+#     # [Stealing]
+#     TimeRestrictingNode(
+#         ConfidenceRestrictingNode(
+#             MutualStateNode([Perp, Victim], distance=Distance.ADJACENT),
+#             min_confidence=Confidence(0.825, 1.0)
+#         ),
+#         time_requirement=RelativeTimeFrame(minimal=timedelta(seconds=4), maximal=timedelta(seconds=10))
+#     ),
+#     # [Perp turning]
+#     TimeRestrictingNode(
+#         ConjunctionNode([
+#             StateNode([Victim], speed=Speed.WALK, direction=Direction.STRAIGHT),
+#             ConfidenceRestrictingNode(
+#                 StateNode([Perp], direction=Direction.OPPOSITE),
+#                 min_confidence=Confidence(0.825, 1.0)
+#             )
+#         ]),
+#         time_requirement=RelativeTimeFrame(maximal=timedelta(seconds=3))
+#     ),
+#     # [Leaving]
+#     TimeRestrictingNode(
+#         ConjunctionNode([
+#             StateNode([Victim], speed=Speed.WALK),
+#             MutualStateNode([Perp, Victim], mutual_direction=MutualDirection.OPPOSITE),
+#             MutualStateNode([Perp, Victim], distance_change=DistanceChange.INCREASING),
+#             ConfidenceRestrictingNode(
+#                 MutualStateNode([Perp, Victim], distance=Distance.FAR),
+#                 min_confidence=Confidence(0.825, 1.0)
+#             )
+#         ]),
+#         time_requirement=RelativeTimeFrame(maximal=timedelta(seconds=3))
+#     )
+# )

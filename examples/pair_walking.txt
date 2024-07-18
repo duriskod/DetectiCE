@@ -1,0 +1,28 @@
+[Walking] Anna and Bob must be adjacent to each other
+and Anna and Bob must walk
+and Anna and Bob move alongside each other
+and Anna and Bob move in parallel
+for at least 15 seconds.
+
+# SequentialNode(
+#     # [Walking]
+#     TimeRestrictingNode(
+#         ConjunctionNode([
+#             ConfidenceRestrictingNode(
+#                 MutualStateNode([Anna, Bob], distance=Distance.ADJACENT),
+#                 min_confidence=Confidence(0.825, 1.0)
+#             ),
+#             ConfidenceRestrictingNode(
+#                 StateNode([Anna, Bob], speed=Speed.WALK),
+#                 min_confidence=Confidence(0.825, 1.0)
+#             ),
+#             DisjunctionNode([
+#                 StateNode([Anna, Bob], speed=Speed.WALK),
+#                 StateNode([Anna, Bob], speed=Speed.RUN),
+#             ]),
+#             MutualStateNode([Anna, Bob], distance_change=DistanceChange.CONSTANT),
+#             MutualStateNode([Anna, Bob], mutual_direction=MutualDirection.PARALLEL)
+#         ]),
+#         time_requirement=RelativeTimeFrame(minimal=timedelta(seconds=15))
+#     )
+# )

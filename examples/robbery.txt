@@ -1,0 +1,55 @@
+[Approaching] Perp walks towards Victim and Victim walks away from Perp and Perp and Victim are not adjacent to each other, then
+[Contact] Perp and Victim walk straight and Perp must be adjacent to Victim for at most 5 seconds, then
+[Fleeing] Perp must run away from Victim and (Victim stands or Victim runs towards Perp) for at least 3 seconds.
+
+# SequentialNode(
+#     # [Approaching]
+#     ConjunctionNode([
+#         StateNode([Perp], speed=Speed.WALK),
+#         ActorTargetStateNode([Perp, Victim],
+#                              intended_distance_change=DistanceChange.DECREASING,
+#                              relative_direction=Direction.STRAIGHT),
+#         StateNode([Victim], speed=Speed.WALK),
+#         ActorTargetStateNode([Victim, Perp],
+#                              intended_distance_change=DistanceChange.INCREASING,
+#                              relative_direction=Direction.OPPOSITE),
+#         NegationNode(
+#             MutualStateNode([Perp, Victim], distance=Distance.ADJACENT),
+#         )
+#     ]),
+#     # [Contact]
+#     TimeRestrictingNode(
+#         ConjunctionNode([
+#             StateNode([Perp, Victim], speed=Speed.WALK, direction=Direction.STRAIGHT),
+#             ConfidenceRestrictingNode(
+#                 MutualStateNode([Perp, Victim], distance=Distance.ADJACENT),
+#                 min_confidence=Confidence(0.825, 1.0)
+#             )
+#         ]),
+#         time_requirement=RelativeTimeFrame(maximal=timedelta(seconds=5))
+#     ),
+#     # [Fleeing]
+#     TimeRestrictingNode(
+#         ConjunctionNode([
+#             ConfidenceRestrictingNode(
+#                 ConjunctionNode([
+#                     StateNode([Perp], speed=Speed.RUN),
+#                     ActorTargetStateNode([Perp, Victim],
+#                                          intended_distance_change=DistanceChange.INCREASING,
+#                                          relative_direction=Direction.OPPOSITE),
+#                 ]),
+#                 min_confidence=Confidence(0.825, 1.0)
+#             ),
+#             DisjunctionNode([
+#                 StateNode([Victim], speed=Speed.STAND),
+#                 ConjunctionNode([
+#                     StateNode([Victim], speed=Speed.RUN),
+#                     ActorTargetStateNode([Victim, Perp],
+#                                          intended_distance_change=DistanceChange.DECREASING,
+#                                          relative_direction=Direction.STRAIGHT),
+#                 ])
+#             ])
+#         ]),
+#         time_requirement=RelativeTimeFrame(minimal=timedelta(seconds=3))
+#     )
+# )

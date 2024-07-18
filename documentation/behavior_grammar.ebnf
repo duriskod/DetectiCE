@@ -1,0 +1,67 @@
+/* https://rr.red-dove.com/ui */
+
+Behavior ::= Label Behavior
+           | Behavior "then" Behavior           /* Sequential node */
+           | Behavior "and" Behavior            /* Conjunction node */
+           | Behavior "or" Behavior             /* Disjunction node */
+           | "not" Behavior                     /* Negation node */
+           | "(" Behavior ")" TimeSpanBounds?   /* Priority */
+           | Action TimeSpanBounds?             /* Sub-tree */
+
+Action ::= Actors Priority? Negation? "stand"
+         | Actors Priority? Negation? "stand" RelativeDistance (Actor | "each other")
+         | Actors Priority? ("is"|"are"|"be") Negation? RelativeDistance (Actor | "each other")
+         | Actors Priority? Negation? MovingSpeed
+         | Actors Priority? Negation? MovingSpeed AbsoluteDirection Actor?
+         | Actors Priority? Negation? MovingSpeed MutualDirection
+         | Actors Priority? Negation? MovingSpeed RelativeDirection (Actor | "each other")
+
+Priority ::= "must"
+
+Negation ::= "not"
+            | "do not"
+            | "does not"
+
+MovingSpeed ::= "walk" "s"?
+              | "run" "s"?
+              | "move" "s"?
+
+AbsoluteDirection ::= "straight"
+                    | "to the"? "left" "of"?
+                    | "to the"? "right" "of"?
+                    | "opposite" "to"?
+
+RelativeDirection ::= "towards"
+                    | "from" | "away from"
+                    | "with" | "alongside"
+
+MutualDirection ::= "in parallel" | "in the same direction"
+                  | "independent" ("ly" | " of each other")
+                  | "in opposite directions"
+
+RelativeDistance ::= "far from"
+                   | "near" "to"?
+                   | "adjacent to"
+
+TimeSpanBounds ::= "for" TimeSpanBound
+
+TimeSpanBound ::= "at least" TimeSpan
+                | "at most" TimeSpan
+                | ("approximately"|"about"|"cca") TimeSpan
+                | "between" TimeSpan "and" TimeSpan
+                | "between" Number "and" Number TimeUnit
+
+TimeSpan ::= Number TimeUnit
+
+Label ::= "["[a-zA-Z_][a-zA-Z0-9_ ]*"]"
+
+Number ::= [0-9]+
+
+TimeUnit ::= "seconds" 
+           | "minutes" 
+           | "hours"
+
+Actors ::= Actors "and"? Actor
+         | Actor
+
+Actor ::= [a-zA-Z_][a-zA-Z0-9_]*
